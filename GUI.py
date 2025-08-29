@@ -34,17 +34,26 @@ def select_klas():
 
     clear_root()
 
+    ncols = int(np.sqrt(len(KLASSEN)))  # Aim for a square layout
+    nrows = (len(KLASSEN) - 1) // ncols + 1  # Calculate number of rows needed
+
     # create a button for each class
     for ii, klas in enumerate(KLASSEN):
         frame = tk.Frame(root)
-        frame.grid(row=ii, column=0)
-        button = tk.Button(frame, text=klas, font=("Helvetica", int(25*SCALE_FACTOR)), bg='green', width=60, height=3, relief=tk.FLAT, 
-                            command=lambda k=klas: open_klas(k))
-        button.pack()
+        frame.grid(row=ii//ncols, column=ii%ncols, sticky="nsew")
+        button = tk.Button(frame, 
+                           text=klas, 
+                           font=("Helvetica", int(25*SCALE_FACTOR)), 
+                           bg='green', 
+                           width=int(80/ncols), 
+                           height=2, 
+                           relief=tk.FLAT, 
+                           command=lambda k=klas: open_klas(k))
+        button.pack(expand=True)
     
-    root.grid_columnconfigure(0, weight=1)
-    root.grid_columnconfigure(1, weight=0)
-    for i in range(root.grid_size()[1]):
+    for i in range(ncols):
+        root.grid_columnconfigure(i, weight=1)
+    for i in range(nrows):
         root.grid_rowconfigure(i, weight=1)
 
 def open_klas(klas):
