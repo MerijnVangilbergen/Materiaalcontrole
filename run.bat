@@ -88,10 +88,13 @@ echo ===========================================================================
 echo.
 python GUI.py
 
+REM Check the exit code of the python script
+if %errorlevel% neq 0 (
+    echo.
+    echo The application closed unexpectedly with an error.
+    echo Press any key to exit.
+    pause >nul
+)
+
 REM Deactivate after the script finishes
 call "%VENV_DIR%\Scripts\deactivate.bat"
-
-:end
-echo.
-echo Script finished. Press any key to exit.
-pause >nul
