@@ -236,7 +236,7 @@ def show_overview():
     nrows = (len(students) - 1) // ncols + 1  # Calculate number of rows needed
     buttons = []
     for ii in range(len(students)):
-        green_count = 3 * (students.at[ii,'Middagstudies'] + 1) - students.loc[ii, date_columns].sum()
+        green_count = np.clip(3 * (students.at[ii,'Middagstudies'] + 1) - students.loc[ii, date_columns].sum(), min=0, max=3)
 
         student_frame = tk.Frame(top_frame)
         student_frame.grid(row=ii % nrows, column=ii // nrows)
