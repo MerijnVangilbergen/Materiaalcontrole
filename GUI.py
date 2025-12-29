@@ -3,7 +3,7 @@ import pandas as pd
 import tkinter as tk
 from win32api import GetSystemMetrics
 
-EXCEL_FILE = 'materiaalcontrole.xlsx'
+EXCEL_FILE = 'Materiaalcontrole.xlsx'
 KLASSEN = pd.ExcelFile(EXCEL_FILE).sheet_names
 KLAS = None
 TODAY = pd.Timestamp.today().strftime('%Y-%m-%d')
@@ -204,16 +204,16 @@ def show_overview():
 
     def assign_penalty(button, green_count:int):
         """
-        Assign a penalty to a student by increasing their 'Middagstudies' count by 1.
+        Assign a penalty to a student by increasing their 'Sancties' count by 1.
         """
         voornaam = button['text'].split('     ')[-1].strip()
         idx = students.index[students['Voornaam'] == voornaam][0]
         if green_count == 0:
             # increase the counter by 1
-            students.at[idx, 'Middagstudies'] += 1
-        elif green_count == 3 and students.at[idx, 'Middagstudies'] > 0:
+            students.at[idx, 'Sancties'] += 1
+        elif green_count == 3 and students.at[idx, 'Sancties'] > 0:
             # reduce the counter by 1
-            students.at[idx, 'Middagstudies'] -= 1
+            students.at[idx, 'Sancties'] -= 1
         else:
             # do nothing
             return
@@ -230,20 +230,22 @@ def show_overview():
         
     # List all students in selected class
     students = pd.read_excel(EXCEL_FILE, sheet_name=KLAS)
-    date_columns = list(set(students.columns) - {'Voornaam', 'Middagstudies', 'Nota'})
+    date_columns = list(set(students.columns) - {'Voornaam', 'Sancties', 'Nota'})
 
     ncols = 4
     nrows = (len(students) - 1) // ncols + 1  # Calculate number of rows needed
     buttons = []
     for ii in range(len(students)):
-        green_count = np.clip(3 * (students.at[ii,'Middagstudies'] + 1) - students.loc[ii, date_columns].sum(), min=0, max=3)
+        green_count = np.clip(3 * (students.at[ii,'Sancties'] + 1) - students.loc[ii, date_columns].sum(), min=0, max=3)
 
         student_frame = tk.Frame(top_frame)
         student_frame.grid(row=ii % nrows, column=ii // nrows)
 
         # penalty button
+        count = (students.at[ii,'Sancties'] if 'Sancties Archief' not in students.columns 
+            else students.at[ii,'Sancties'] + students.at[ii,'Sancties Archief'])
         button = tk.Button( student_frame, 
-                            text=f"[{students.at[ii,'Middagstudies']}]     {students.at[ii,'Voornaam']}", 
+                            text=f"[{count}]     {students.at[ii,'Voornaam']}", 
                             font=("Helvetica", int(18*SCALE_FACTOR)), 
                             width=20, 
                             height=2, 
