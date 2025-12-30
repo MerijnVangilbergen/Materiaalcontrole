@@ -230,7 +230,7 @@ def show_overview():
         
     # List all students in selected class
     students = pd.read_excel(EXCEL_FILE, sheet_name=KLAS)
-    date_columns = list(set(students.columns) - {'Voornaam', 'Sancties', 'Nota'})
+    date_columns = set(students.columns) - {'Voornaam', 'Sancties', 'Sancties Archief', 'Nota'}
 
     ncols = 4
     nrows = (len(students) - 1) // ncols + 1  # Calculate number of rows needed
